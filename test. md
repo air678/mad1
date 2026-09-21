@@ -1,0 +1,60 @@
+Aim
+To perform image acquisition, image format conversion, and color space transformations using OpenCV, and apply image preprocessing techniques such as smoothing, sharpening, and histogram equalization.
+Objectives
+To read and display an image using OpenCV.
+To convert image formats and save images in different formats.
+To perform color space conversions (BGR to Grayscale and HSV).
+To apply smoothing (noise reduction) techniques.
+To apply image sharpening for enhancing details.
+To perform histogram equalization for contrast enhancement.
+Tools Used
+Hardware
+Computer/Laptop
+Minimum 4 GB RAM
+Intel/AMD Processor Software
+Python 3.x
+OpenCV (cv2)
+NumPy
+Google Colab / Jupyter Notebook / VS Code
+
+Answer:-
+
+
+print(f"File found. Size: {os.path.getsize(raw_path)} bytes")
+
+# 1. Image Acquisition rgb_image = None
+try:
+with rawpy.imread(raw_path) as raw: rgb_image = raw.postprocess()
+print("Loaded via rawpy.") except Exception as e:
+print(f"rawpy failed ({e}). Attempting OpenCV/ImageIO...") rgb_image = cv2.imread(raw_path)
+if rgb_image is not None:
+rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2RGB) print("Loaded via OpenCV fallback.")
+
+if rgb_image is None:
+print("Error: Could not decode image. The DNG format may be unsupported or corrupted.")
+else:
+# 2. Format Conversion & Color Space Operations bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR) gray_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2GRAY) hsv_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2HSV)
+
+# 3. Preprocessing Techniques # A. Smoothing (Gaussian Blur)
+smoothed = cv2.GaussianBlur(gray_image, (5, 5), 0)
+
+# B. Sharpening
+kernel_sharpen = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]]) sharpened = cv2.filter2D(gray_image, -1, kernel_sharpen)
+
+# C. Histogram Equalization
+equalized = cv2.equalizeHist(gray_image)
+
+# Visualization plt.figure(figsize=(15, 10))
+titles = ['Original (RGB)', 'Grayscale', 'Smoothed', 'Sharpened', 'Equalized']
+images = [rgb_image, gray_image, smoothed, sharpened, equalized]
+
+for i in range(5): plt.subplot(2, 3, i+1)
+if len(images[i].shape) == 3: plt.imshow(images[i])
+else:
+plt.imshow(images[i], cmap='gray') plt.title(titles[i])
+plt.axis('off')
+
+plt.tight_layout() plt.show()
+
+Output :-
+
